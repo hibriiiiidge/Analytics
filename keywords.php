@@ -1,6 +1,9 @@
 <?php
-  define(MAX_SITE, "5");
+  session_start();
 
+  //define(MAX_SITE, "5");
+
+  include("config.php");
   include("db_connect.php");
   include("functions.php");
 
@@ -9,24 +12,22 @@
   $today = "20170411";
   $ytday = "20170410";
 
-  //keyword @TODO 関数化
-  $kySql = "SELECT * FROM `keywords` WHERE no = :keyNo";
-  $kyStmt = $pdo -> prepare($kySql);
-  $kyStmt -> bindValue(':keyNo', $_GET['keyword'], PDO::PARAM_INT);
-  $kyStmt -> execute();
-  while($row = $kyStmt -> fetch(PDO::FETCH_ASSOC)){
-    $keyword = $row['keyword'];
-  }
+  $keywordNo = $_GET['keywordno']; //@TODO バリデーション
+  $limitS = date("Ymd", strtotime('first day of +0 month'));
+  $limitE = date("Ymd", strtotime('last day of +0 month'));
+
+  //keyword
+  $keyword = getKeywordFromKeywordNo($pdo, $keywordNo);
 
   //site list
-  $list = getTodayRankTitle(MAX_SITE, $today ,$pdo);
+  $list = getTodayRankTitle(MAX_SITE, $today ,$pdo, $keywordNo);
 
   //前日差異
   //当日のランキング
-  $todayRank = getTodayRank($pdo, $today, MAX_SITE, $_GET['keyword']); //@TODO バリデーション
+  $todayRank = getTodayRank($pdo, $today, MAX_SITE, $keywordNo);
 
   //前日のランキング @TODO リファクタリング
-  $ytdayRank = getYtdayRank($pdo, $ytday, MAX_SITE, $_GET['keyword']);
+  $ytdayRank = getYtdayRank($pdo, $ytday, MAX_SITE, $keywordNo);
 
   //差分
   $diff = getRankDiff($todayRank, $ytdayRank);
@@ -41,6 +42,7 @@
   <head>
     <meta charset="utf-8">
     <title></title>
+    <link rel="stylesheet" href="css/style.css">
   </head>
   <body>
     <div class="">
@@ -48,6 +50,12 @@
     </div>
     <div class="">
       期間：<?php echo $today; ?>
+    </div>
+    <div class="">
+      <?php
+        //echo '<a href="/seo/monthly.php?keywordno='.$keywordNo.'&limitS='.$limitS.'&limitE='.$limitE.'">今月の推移</a>';
+        echo '<a href="/seo/monthly.php?keywordno='.$keywordNo.'">今月の推移</a>';
+       ?>
     </div>
     <table>
       <tbody>

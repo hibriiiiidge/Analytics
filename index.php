@@ -1,8 +1,9 @@
 <?php
-  //session_start();
+  session_start();
 
+  include("config.php");
   include("db_connect.php");
-  
+
   $sql = "SELECT
     ky.no       AS keyNo,
     ctgry.type  AS ctgry,
@@ -27,6 +28,7 @@ WHERE
   <head>
     <meta charset="utf-8">
     <title></title>
+    <link rel="stylesheet" href="css/style.css">
   </head>
   <body>
     <div class="">
@@ -49,7 +51,7 @@ WHERE
              <td><?php echo $i+1 ; ?></td>
              <td><?php echo $list[$i]['ctgry']; ?></td>
              <td>
-                <?php $kwURL = "/seo/keywords.php?keyword=".$list[$i]['keyNo'];
+                <?php $kwURL = "/seo/keywords.php?keywordno=".$list[$i]['keyNo'];
                       echo "<a href=$kwURL>"; ?>
                         <?php echo $list[$i]['keyword']; ?>
                 <?php echo "</a>"; ?>

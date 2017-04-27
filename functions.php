@@ -23,7 +23,18 @@ function makeRankSelect($maxNum){
   return implode(",", $eachRankSelect);
 }
 
-function getTodayRankTitle($maxNum, $today, $pdo){
+function getKeywordFromKeywordNo($pdo, $keywordNo){
+  $kySql = "SELECT * FROM `keywords` WHERE no = :keyNo";
+  $kyStmt = $pdo -> prepare($kySql);
+  $kyStmt -> bindValue(':keyNo', $keywordNo, PDO::PARAM_INT);
+  $kyStmt -> execute();
+  while($row = $kyStmt -> fetch(PDO::FETCH_ASSOC)){
+    $keyword = $row['keyword'];
+  }
+  return $keyword;
+}
+
+function getTodayRankTitle($maxNum, $today, $pdo, $keywordNo){
   $select = makeSelect($maxNum);
   $leftJoin = makeLeftJoin($maxNum);
   //当日
@@ -38,7 +49,7 @@ function getTodayRankTitle($maxNum, $today, $pdo){
       r.keywords_no = :keyNo";
 
   $listStmt = $pdo -> prepare($listSql);
-  $listStmt -> bindValue(':keyNo', $_GET['keyword'], PDO::PARAM_INT); //@TODO バリデーション
+  $listStmt -> bindValue(':keyNo', $keywordNo, PDO::PARAM_INT); //@TODO バリデーション
   $listStmt -> execute();
   $list = array();
   $row = $listStmt->fetch(PDO::FETCH_ASSOC);

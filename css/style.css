@@ -1,0 +1,8 @@
+table, td, th {
+  border: 1px #808080 solid;
+  border-collapse: collapse;
+}
+
+#monthly th{
+  width: 40px;
+}
