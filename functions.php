@@ -2,7 +2,7 @@
 function makeSelect($maxNum){
   $eachSelect = array();
   for ($i=1; $i <= $maxNum; $i++) {
-    $eachSelect[] = "site".$i.".title AS title".$i.",site".$i.".url AS url".$i;
+    $eachSelect[] = "site".$i.".title AS title".$i." ,site".$i.".url AS url".$i." ,site".$i.".no AS no".$i;
   }
   return implode(",", $eachSelect);
 }
@@ -44,7 +44,7 @@ function getTodayRankTitle($maxNum, $today, $pdo, $keywordNo){
     FROM `ranking` AS r
     $leftJoin
     WHERE
-        r.dt_no = $today
+        DATE_FORMAT(r.rgst, '%Y%m%d') = $today
     AND
       r.keywords_no = :keyNo";
 
@@ -99,7 +99,7 @@ function makeSQL($day, $maxRank){
   FROM
       `ranking`
   WHERE
-    `dt_no` = $day
+    DATE_FORMAT(`rgst`, '%Y%m%d') = $day
       AND
     `keywords_no` = :keyNo";
 }
@@ -130,5 +130,47 @@ function getRankDiff($todayRank, $ytdayRank){
   }
   return $diff;
 }
+
+function getMonthlyRankData($maxNum, $sTrgtYM, $pdo, $keywordNo){
+  $select = makeSelect($maxNum);
+  $leftJoin = makeLeftJoin($maxNum);
+  $sql =
+  "SELECT ".$select." ,r.rgst AS rgst
+    FROM
+      `ranking` AS r
+      $leftJoin
+    WHERE
+      r.keywords_no = :keyNo
+    AND
+      (DATE_FORMAT(r.rgst, '%Y%m') = ".$sTrgtYM.")";
+  //var_dump($sql);
+  // exit;
+  $stmt = $pdo -> prepare($sql);
+  $stmt -> bindValue(':keyNo', $keywordNo, PDO::PARAM_INT);
+  $stmt -> execute();
+  $dbList = array();
+  return $stmt -> fetchAll();
+}
+
+function insertStr($text, $str, $start){
+  return substr_replace($text, $str, $start, 0);
+}
+
+function setTitleList($maxNum, $dbList){
+  $allTitleListAry = array();
+  for ($i=1; $i <= $maxNum ; $i++) {
+    $title      = 'title'.$i;
+    $siteNo     = 'no'.$i;
+    $titleList  = array_column($dbList, $title);
+    $siteNoList = array_column($dbList, $siteNo);
+    $setList= array();
+    foreach ($titleList as $key => $value) {
+      $setList[] = ["0" => $value, "1" => $siteNoList[$key]];
+    }
+    array_push($allTitleListAry, $setList);
+  }
+  return $allTitleListAry;
+}
+
 
 ?>

@@ -13,8 +13,9 @@
   $ytday = "20170410";
 
   $keywordNo = $_GET['keywordno']; //@TODO バリデーション
-  $limitS = date("Ymd", strtotime('first day of +0 month'));
-  $limitE = date("Ymd", strtotime('last day of +0 month'));
+  $trgtYMD = date("Ymd", strtotime('first day of +0 month'));
+  $sTrgtYM = date("Ym", strtotime('first day of +0 month'));
+  $eTrgtYMD = date("Ymd", strtotime('last day of +0 month'));
 
   //keyword
   $keyword = getKeywordFromKeywordNo($pdo, $keywordNo);
@@ -53,8 +54,9 @@
     </div>
     <div class="">
       <?php
-        //echo '<a href="/seo/monthly.php?keywordno='.$keywordNo.'&limitS='.$limitS.'&limitE='.$limitE.'">今月の推移</a>';
-        echo '<a href="/seo/monthly.php?keywordno='.$keywordNo.'">今月の推移</a>';
+        //echo '<a href="/seo/monthly.php?keywordno='.$keywordNo.'&limitS='.$trgtM.'&limitE='.$eTrgtM.'">今月の推移</a>';
+        echo '<a href="/seo/monthly.php?keywordno='.$keywordNo.'&startTargetYearMonth='.$sTrgtYM.'">今月の推移</a>';
+        //echo '<a href="/seo/monthly.php?keywordno='.$keywordNo.'">今月の推移</a>';
        ?>
     </div>
     <table>

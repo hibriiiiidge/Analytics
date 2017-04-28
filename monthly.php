@@ -6,53 +6,41 @@
   include("functions.php");
 
   $keywordNo = $_GET['keywordno']; //@TODO　バリデーション
-  //$limitS    = $_GET['limitS'];
-  //$limitE    = $_GET['limitE'];
-  $limitS = date("Ymd", strtotime('first day of +0 month'));
-  $limitSY = date("Y");
-  $limitSm = date("m");
-  // $limitSY = 2016;
-  // $limitSm = 2;
-  $limitSd = 1;
-  //$todayD = date("d");
-  $todayD = 15;
-  $limitE = date("Ymd", strtotime('last day of +0 month'));
+  $sTrgtYM   = $_GET['startTargetYearMonth'];
+  $sTrgtY_M  = insertStr($_GET['startTargetYearMonth'], '-', 4, 0);
+  $sTrgtY_M_D = $sTrgtY_M."-1";
+
+  $sTrgtLastYM = date("Ym", strtotime(date($sTrgtY_M_D).'-1 month'));
+  $sTrgtnextYM = date("Ym", strtotime(date($sTrgtY_M_D).'+1 month'));
+
+  $sTrgtY = substr($sTrgtYM, 0, 4);
+  $sTrgtM = substr($sTrgtYM, 4, 2);
+  $sTrgtD = 1;
+  $eTrgtD = date("d", strtotime('last day of '. $sTrgtY_M));
+
+  //今月
+  $thisMonth = date("Ym");
 
   //keyword
   $keyword = getKeywordFromKeywordNo($pdo, $keywordNo);
 
   //ranking
-  $sql =
-  "SELECT
-      no,
-      ".makeRankSelect(MAX_SITE)."
-      rgst
-    FROM
-      `ranking`
-    WHERE
-      keywords_no = :keyNo";
-  $stmt = $pdo -> prepare($sql);
-  $stmt -> bindValue(':keyNo', $keywordNo, PDO::PARAM_INT);
-  $stmt -> execute();
-  $dbList = array();
-  while($row = $stmt -> fetch(PDO::FETCH_ASSOC)) {
-    $dbList[] = ['rank1' => $row['rank1']];
-    // $dbList[] = [makeDbList(MAX_SITE, $row)];
+  $dbList = getMonthlyRankData(MAX_SITE, $sTrgtYM, $pdo, $keywordNo);
+  //print_r($dbList);
+
+  if(empty($dbList)){
+    $beforeMesureDays = $eTrgtD;
   }
-  $rank1list = array_column($dbList, 'rank1');
+  else{
+    $allTitleList = setTitleList(MAX_SITE, $dbList);
 
-  var_dump($dbList);
-
-  function makeDbList($maxNum, $row){
-    $eachDbList = array();
-    for ($i=1; $i <= $maxNum ; $i++) {
-      //$rank = "'rank".$i."'";
-      //$eachDbList[] = "['rank".$i."' => $row['rank".$i."']]";
-    }
-    return implode(",", $eachDbList);
+    $existNum = count($allTitleList[0]);
+    //計測スタート日
+    $date = new DateTime($dbList[0]['rgst']);
+    $mesureStartDay = $date->format("d");
+    //計測日以前 1日から$mesureStartDayまで
+    $beforeMesureDays = $mesureStartDay - 1;
   }
-
-  //var_dump($rank1list);
 ?>
 <!DOCTYPE html>
 <html>
@@ -67,50 +55,57 @@
     </div>
     <div class="">
       <div class="">
-        今月の推移 <?php echo $limitS; ?> ~ <?php echo $limitE; ?>
+        <?php echo $sTrgtYM; ?>の推移
       </div>
       <div class="">
         キーワード：<?php echo $keyword;?>
+      </div>
+      <div class="">
+        <?php
+          echo '<a href="/seo/monthly.php?keywordno='.$keywordNo.'&startTargetYearMonth='.$sTrgtLastYM.'">先月の推移</a>';
+          if($thisMonth !== $sTrgtYM){
+            echo '<a href="/seo/monthly.php?keywordno='.$keywordNo.'&startTargetYearMonth='.$sTrgtnextYM.'">一月戻る</a>';
+          }
+         ?>
       </div>
       <table id="monthly">
         <tbody>
           <tr>
             <th>順位</th>
             <?php
-            while (checkdate($limitSm, $limitSd, $limitSY)) {
-              echo "<th>$limitSd</th>";
-              $limitSd++;
+            while (checkdate($sTrgtM, $sTrgtD, $sTrgtY)) {
+              echo "<th>$sTrgtD</th>";
+              $sTrgtD++;
             }
              ?>
           </tr>
 
-          <tr>
-           <td>1</td>
-           <?php
-            for ($i=0; $i < count($rank1list); $i++) {
-                echo "<td>$rank1list[$i]</td>";
-            }
-           ?>
-          </tr>
+          <?php for ($no=1; $no <= MAX_SITE; $no++) : ?>
+            <tr>
+              <td><?php echo $no; ?></td>
+              <?php
+                for ($i=0; $i < $beforeMesureDays ; $i++) {
+                  echo "<td>×</td>";
+                }
+                for ($j=$mesureStartDay, $m=0; $j < $mesureStartDay+$existNum; $j++, $m++) {
+                  $n = $no-1;
+                  $targetTitle = $allTitleList[$n][$m];
+                  if($targetTitle){
+                      echo "<td><a href='/seo/site_detail.php?siteNo=$targetTitle[1]&startTargetYearMonth=$sTrgtYM'>$targetTitle[0]</a></td>";
+                  }
+                  else{
+                      echo "<td>nodata</td>";
+                  }
+                }
+                if($mesureStartDay){
+                  for ($k=$mesureStartDay+$existNum; $k <= $eTrgtD; $k++) {
+                    echo "<td> - </td>";
+                  }
+                }
+              ?>
+            </tr>
+          <?php endfor; ?>
 
-          <tr>
-           <td>2</td>
-           <td>G</td>
-           <td>H</td>
-           <td>I</td>
-           <td>J</td>
-           <td>K</td>
-           <td>L</td>
-          </tr>
-          <tr>
-           <td>3</td>
-           <td>M</td>
-           <td>N</td>
-           <td>O</td>
-           <td>P</td>
-           <td>Q</td>
-           <td>R</td>
-          </tr>
         </tbody>
       </table>
     </div>
