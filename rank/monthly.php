@@ -1,9 +1,9 @@
 <?php
   session_start();
 
-  include("config.php");
-  include("db_connect.php");
-  include("functions.php");
+  include("../config.php");
+  include("../db_connect.php");
+  include("../functions.php");
 
   $keywordNo = $_GET['keywordno']; //@TODO　バリデーション
   $sTrgtYM   = $_GET['startTargetYearMonth'];
@@ -47,7 +47,7 @@
   <head>
     <meta charset="utf-8">
     <title></title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
   </head>
   <body>
     <div class="">
@@ -55,16 +55,16 @@
     </div>
     <div class="">
       <div class="">
-        <?php echo $sTrgtYM; ?>の推移
+        <?php echo h($sTrgtYM); ?>の推移
       </div>
       <div class="">
-        キーワード：<?php echo $keyword;?>
+        キーワード：<?php echo h($keyword);?>
       </div>
       <div class="">
         <?php
-          echo '<a href="/seo/monthly.php?keywordno='.$keywordNo.'&startTargetYearMonth='.$sTrgtLastYM.'">先月の推移</a>';
+          echo '<a href="/seo/rank/monthly.php?keywordno='.h($keywordNo).'&startTargetYearMonth='.h($sTrgtLastYM).'">先月の推移</a>';
           if($thisMonth !== $sTrgtYM){
-            echo '<a href="/seo/monthly.php?keywordno='.$keywordNo.'&startTargetYearMonth='.$sTrgtnextYM.'">一月戻る</a>';
+            echo '<a href="/seo/rank/monthly.php?keywordno='.h($keywordNo).'&startTargetYearMonth='.h($sTrgtnextYM).'">一月戻る</a>';
           }
          ?>
       </div>
@@ -82,7 +82,7 @@
 
           <?php for ($no=1; $no <= MAX_SITE; $no++) : ?>
             <tr>
-              <td><?php echo $no; ?></td>
+              <td><?php echo h($no); ?></td>
               <?php
                 for ($i=0; $i < $beforeMesureDays ; $i++) {
                   echo "<td>×</td>";
@@ -91,7 +91,7 @@
                   $n = $no-1;
                   $targetTitle = $allTitleList[$n][$m];
                   if($targetTitle){
-                      echo "<td><a href='/seo/site_detail.php?siteNo=$targetTitle[1]&startTargetYearMonth=$sTrgtYM'>$targetTitle[0]</a></td>";
+                      echo "<td><a href='/seo/site/detail.php?siteNo=$targetTitle[1]&startTargetYearMonth=$sTrgtYM'>$targetTitle[0]</a></td>";
                   }
                   else{
                       echo "<td>nodata</td>";

@@ -3,6 +3,7 @@
 
   include("config.php");
   include("db_connect.php");
+  include("functions.php");
 
   $sql = "SELECT
     ky.no       AS keyNo,
@@ -48,15 +49,15 @@ WHERE
           </tr>
           <?php for ($i=0; $i < count($list); $i++) : ?>
            <tr>
-             <td><?php echo $i+1 ; ?></td>
-             <td><?php echo $list[$i]['ctgry']; ?></td>
+             <td><?php echo h($i)+1 ; ?></td>
+             <td><?php echo h($list[$i]['ctgry']); ?></td>
              <td>
-                <?php $kwURL = "/seo/keywords.php?keywordno=".$list[$i]['keyNo'];
+                <?php $kwURL = "/seo/rank/daily.php?keywordno=".h($list[$i]['keyNo']);
                       echo "<a href=$kwURL>"; ?>
-                        <?php echo $list[$i]['keyword']; ?>
+                        <?php echo h($list[$i]['keyword']); ?>
                 <?php echo "</a>"; ?>
              </td>
-             <td><?php echo $list[$i]['rgst']; ?></td>
+             <td><?php echo h($list[$i]['rgst']); ?></td>
            </tr>
          <?php endfor; ?>
         </tbody>

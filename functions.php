@@ -1,4 +1,8 @@
 <?php
+function h($str){
+    return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
+}
+
 function makeSelect($maxNum){
   $eachSelect = array();
   for ($i=1; $i <= $maxNum; $i++) {

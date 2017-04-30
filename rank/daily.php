@@ -3,9 +3,9 @@
 
   //define(MAX_SITE, "5");
 
-  include("config.php");
-  include("db_connect.php");
-  include("functions.php");
+  include("../config.php");
+  include("../db_connect.php");
+  include("../functions.php");
 
   //$today = date("Ymd");@TODO 本来はこっち
   //$ytday = date("Ymd", strtotime("-1 day"));
@@ -43,19 +43,19 @@
   <head>
     <meta charset="utf-8">
     <title></title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
   </head>
   <body>
     <div class="">
-      キーワード：<?php echo $keyword;?>
+      キーワード：<?php echo h($keyword);?>
     </div>
     <div class="">
-      期間：<?php echo $today; ?>
+      期間：<?php echo h($today); ?>
     </div>
     <div class="">
       <?php
         //echo '<a href="/seo/monthly.php?keywordno='.$keywordNo.'&limitS='.$trgtM.'&limitE='.$eTrgtM.'">今月の推移</a>';
-        echo '<a href="/seo/monthly.php?keywordno='.$keywordNo.'&startTargetYearMonth='.$sTrgtYM.'">今月の推移</a>';
+        echo '<a href="/seo/rank/monthly.php?keywordno='.h($keywordNo).'&startTargetYearMonth='.h($sTrgtYM).'">今月の推移</a>';
         //echo '<a href="/seo/monthly.php?keywordno='.$keywordNo.'">今月の推移</a>';
        ?>
     </div>
@@ -69,10 +69,10 @@
         </tr>
         <?php for ($i=1; $i <= count($compList); $i++) : $rank = "rank".$i; ?>
          <tr>
-           <td><?php echo $i ; ?></td>
-           <td><?php echo $compList[$rank]['diffNum']; echo $compList[$rank]['mark']; ?></td>
-           <td><?php echo $compList[$rank]['title']; ?></td>
-           <td><?php echo $compList[$rank]['url']; ?></td>
+           <td><?php echo h($i) ; ?></td>
+           <td><?php echo h($compList[$rank]['diffNum']); echo h($compList[$rank]['mark']); ?></td>
+           <td><?php echo h($compList[$rank]['title']); ?></td>
+           <td><?php echo h($compList[$rank]['url']); ?></td>
          </tr>
        <?php endfor; ?>
       </tbody>
