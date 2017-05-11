@@ -7,10 +7,10 @@
   include("../db_connect.php");
   include("../functions.php");
 
-  //$today = date("Ymd");@TODO 本来はこっち
-  //$ytday = date("Ymd", strtotime("-1 day"));
-  $today = "20170411";
-  $ytday = "20170410";
+  $today = date("Ymd");//@TODO 本来はこっち
+  $ytday = date("Ymd", strtotime("-1 day"));
+  //$today = "20170411";
+  //$ytday = "20170410";
 
   $keywordNo = $_GET['keywordno']; //@TODO バリデーション
   $trgtYMD = date("Ymd", strtotime('first day of +0 month'));
@@ -32,10 +32,9 @@
 
   //差分
   $diff = getRankDiff($todayRank, $ytdayRank);
-
+  //整形後の配列
   $compList = array_merge_recursive($list, $diff);
-
-  //var_dump($compList);
+  //var_dump($diff);
 
 ?>
 <!DOCTYPE html>
@@ -47,6 +46,9 @@
   </head>
   <body>
     <div class="">
+      <a href="/seo/">戻る</a>
+    </div>
+    <div class="">
       キーワード：<?php echo h($keyword);?>
     </div>
     <div class="">
@@ -54,12 +56,10 @@
     </div>
     <div class="">
       <?php
-        //echo '<a href="/seo/monthly.php?keywordno='.$keywordNo.'&limitS='.$trgtM.'&limitE='.$eTrgtM.'">今月の推移</a>';
         echo '<a href="/seo/rank/monthly.php?keywordno='.h($keywordNo).'&startTargetYearMonth='.h($sTrgtYM).'">今月の推移</a>';
-        //echo '<a href="/seo/monthly.php?keywordno='.$keywordNo.'">今月の推移</a>';
        ?>
     </div>
-    <table>
+    <table id="dailyTable">
       <tbody>
         <tr>
           <th>NO</th>
@@ -68,11 +68,21 @@
           <th>URL</th>
         </tr>
         <?php for ($i=1; $i <= count($compList); $i++) : $rank = "rank".$i; ?>
-         <tr>
+         <tr class="dailyRank">
            <td><?php echo h($i) ; ?></td>
-           <td><?php echo h($compList[$rank]['diffNum']); echo h($compList[$rank]['mark']); ?></td>
+           <td>
+             <?php
+              if (!$compList[$rank]['mark']) {
+                echo "圏外▲";
+              }
+              echo h($compList[$rank]['diffNum']);
+              echo h($compList[$rank]['mark']);
+              ?>
+           </td>
            <td><?php echo h($compList[$rank]['title']); ?></td>
-           <td><?php echo h($compList[$rank]['url']); ?></td>
+           <td>
+             <?php echo "<a href=".h($compList[$rank]['url']).">".h($compList[$rank]['url'])."</a>"; ?>
+           </td>
          </tr>
        <?php endfor; ?>
       </tbody>

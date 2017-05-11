@@ -8,4 +8,3 @@ try {
 catch (Exception $e) {
   exit('データベース接続失敗'.$e->getMessage());
 }
-?>

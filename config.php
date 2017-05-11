@@ -1,4 +1,2 @@
 <?php
-  define(MAX_SITE, "5");
-
- ?>
+  define(MAX_SITE, "20");
