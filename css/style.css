@@ -3,6 +3,10 @@ table, td, th {
   border-collapse: collapse;
 }
 
+#monthlyTable{
+  width: 1800px;
+}
+
 #monthlyTable tr.monthyRank,
 #detailTable tr.detailKyWords,
 #dailyTable tr.dailyRank{

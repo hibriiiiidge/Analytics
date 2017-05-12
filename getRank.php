@@ -1,22 +1,20 @@
 <?php
   //TODO 全体リファクタリング+関数化
-  define(SITE_NUM, 2); //n*10が取得サイト数
+  define(SITE_NUM, 1); //n*10が取得サイト数
   //define(MAX_SITE, 20); //表示対象サイト数
 
   include("config.php");
   include("db_connect.php");
-  include("functions.php");
+  include("utility/functions.php");
 
   // phpQueryの読み込み
-  require_once("phpQuery-onefile.php");
+  require_once("utility/phpQuery-onefile.php");
 
   $date       = new Datetime();
   $dtYmd      = $date->format("Y-m-d");
   $dtHis      = $date->format("Y-m-d H:i:s");
 
   //targetWordsに関する処理
-  //@TODO $_GET['query']のバリデーション
-  //$tw = (string)filter_input(INPUT_GET, 'targetWords');
   //category テーブルから生きている$ctgryNoを取得
   $slctCtgSql ="SELECT no FROM `category` WHERE status <>'x'";
   $slctCtgStmt = $pdo -> prepare($slctCtgSql);
@@ -53,17 +51,22 @@
         //results_bidの項目をforeachで回す
         foreach ($doc["#res"]->find(".g") as $items) {
           sleep(1);
-          $siteTitle = pq($items)->find("a")->text();
+          $siteTitle  = pq($items)->find("a")->text();
           $siteURLAll = pq($items)->find("a")->attr('href');
           preg_match('(https?://[-_.!~*\'()a-zA-Z0-9;/?:@=+$,%#]+)', $siteURLAll, $siteURL);
-          $jsonData['items'][$i][$j][] = ['title' => $siteTitle, 'url' => $siteURL[0]];
+          if(!preg_match("/https\:\/\/maps\.google\.co\.jp\/+/", $siteURL[0])){ //googleの地図広告を排除
+            $jsonData['items'][$i][$j][] = ['title' => $siteTitle, 'url' => $siteURL[0]];
+          }
         }
       }
+      //var_dump($jsonData['items']);
       //取得したサイト（MAX_SITE件）がsiteテーブルに既に存在するかどうかの確認
       //存在しなかったらINSERT
       for ($m=0; $m < MAX_SITE ; $m++) {
-        $trgtTitle  = $jsonData['items'][$i][$j][$m]['title'];
-        $trgtUrl    = $jsonData['items'][$i][$j][$m]['url'];
+        $trgtTitleAry   = explode("キャッシュ", $jsonData['items'][$i][$j][$m]['title']);
+        $trgtTitle      = $trgtTitleAry[0];
+        $trgtUrl        = $jsonData['items'][$i][$j][$m]['url'];
+
         $instSiteSql =
         "INSERT INTO
             `site`(title, url, category, rgst)

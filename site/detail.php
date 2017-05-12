@@ -2,9 +2,12 @@
   session_start();
   include("../config.php");
   include("../db_connect.php");
-  include("../functions.php");
+  include("../utility/functions.php");
 
   $siteNo  = $_GET['siteNo']; //@TODO バリデーション
+  if($_GET['keywordNo']){
+    $_SESSION['keywordNo'] = $_GET['keywordNo'];
+  }
   $keywordNo = $_SESSION['keywordNo'];
   $sTrgtYM = $_GET['startTargetYearMonth'];
   $sTrgtY_M  = insertStr($_GET['startTargetYearMonth'], '-', 4, 0);
@@ -74,7 +77,9 @@
   <body>
     <div class="">
       <a href="/seo/">TOP</a><br/>
-      <?php echo '<a href="/seo/rank/monthly.php?keywordno='.$keywordNo.'&startTargetYearMonth='.$sTrgtYM.'">戻る</a>'?>
+      <?php
+      echo '<a href="/seo/rank/monthly.php?keywordno='.$keywordNo.'&startTargetYearMonth='.$sTrgtYM.'">戻る</a>'
+      ?>
     </div>
     <div class="">
       サイトの詳細
@@ -92,7 +97,7 @@
         </thead>
         <tbody>
           <tr>
-            <th style="font-size:10px;">キーワード</th>
+            <th style="font-size:10px;width: 120px;">キーワード</th>
             <?php
             while (checkdate($sTrgtM, $sTrgtD, $sTrgtY)) {
               echo "<th>$sTrgtD</th>";
@@ -113,7 +118,7 @@
                     echo "<td>$siteRank</td>";
                   }
                   else{
-                    echo "<td>圏外(nodata)</td>";
+                    echo "<td>圏外</td>";
                   }
                 }
                 if($beforeMesureDays[$no] !== $eTrgtD){

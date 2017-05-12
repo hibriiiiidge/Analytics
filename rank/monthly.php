@@ -3,7 +3,7 @@
 
   include("../config.php");
   include("../db_connect.php");
-  include("../functions.php");
+  include("../utility/functions.php");
 
   $keywordNo = $_GET['keywordno']; //@TODO バリデーション
   $_SESSION['keywordNo'] = $keywordNo;
@@ -105,12 +105,8 @@
                 for ($j=$mesureStartDay, $m=0; $j < $mesureStartDay+$existNum; $j++, $m++) {
                   $n = $no-1;
                   $targetTitle = $allTitleList[$n][$m];
-                  if($targetTitle){
-                      echo "<td class='site$targetTitle[1]'><a href='/seo/site/detail.php?siteNo=$targetTitle[1]&startTargetYearMonth=$sTrgtYM'>$targetTitle[0]</a></td>";
-                  }
-                  else{
-                      echo "<td>圏外(nodata)</td>";
-                  }
+                  $title = cutStr($targetTitle[0], 24);
+                  echo "<td class='site$targetTitle[1]'><a href='/seo/site/detail.php?siteNo=$targetTitle[1]&startTargetYearMonth=$sTrgtYM'>$title</a></td>";
                 }
                 //計測日が存在する場合は、月末までの表示を "-"にする
                 if($mesureStartDay){

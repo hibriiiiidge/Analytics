@@ -2,10 +2,20 @@
 /**
  * エスケープ関数
  * @param $str string
- * @return $string
+ * @return string
  */
 function h($str){
     return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
+}
+
+/**
+ * 文字列を指定の数で制限する + 末尾に"..."を追加
+ * @param $str title
+ * @param $int 制限文字数
+ * @return string
+ */
+function cutStr($str, $int){
+  return mb_strimwidth($str, 0, $int, '...');
 }
 
 /**
@@ -62,8 +72,14 @@ FROM
     `keywords` AS ky
     LEFT JOIN `category` AS ctgry ON ctgry.no = ky.category
 WHERE
-    1";
-  return $pdo->query($sql);
+    ky.status <> 'x'";
+  $stmt = $pdo->query($sql);
+  $list = array();
+  //View用にデータを整形
+  while($row = $stmt -> fetch(PDO::FETCH_ASSOC)) {
+    $list[] = [ "keyNo" => $row['keyNo'], "ctgry" => $row['ctgry'] ,"keyword" => $row['keyword'], "rgst" => $row['rgst']];
+  }
+  return $list;
 }
 
 /**
@@ -73,11 +89,11 @@ WHERE
  * @return string キーワード
  */
 function getKeywordFromKeywordNo($pdo, $keywordNo){
-  $kySql = "SELECT * FROM `keywords` WHERE no = :keyNo";
-  $kyStmt = $pdo -> prepare($kySql);
-  $kyStmt -> bindValue(':keyNo', $keywordNo, PDO::PARAM_INT);
-  $kyStmt -> execute();
-  while($row = $kyStmt -> fetch(PDO::FETCH_ASSOC)){
+  $kwSql = "SELECT * FROM `keywords` WHERE no = :keyNo";
+  $kwStmt = $pdo -> prepare($kwSql);
+  $kwStmt -> bindValue(':keyNo', $keywordNo, PDO::PARAM_INT);
+  $kwStmt -> execute();
+  while($row = $kwStmt -> fetch(PDO::FETCH_ASSOC)){
     $keyword = $row['keyword'];
   }
   return $keyword;
@@ -111,10 +127,11 @@ function getTodayRankTitle($maxNum, $today, $pdo, $keywordNo){
   $list = array();
   $row = $listStmt->fetch(PDO::FETCH_ASSOC);
   for ($i=1; $i <= $maxNum ; $i++) {
-    $rank = "rank".$i;
-    $title = "title".$i;
-    $url = "url".$i;
-    $list[$rank] = ["title" => $row[$title], "url" => $row[$url]];
+    $rank   = "rank".$i;
+    $no     = "no".$i;
+    $title  = "title".$i;
+    $url    = "url".$i;
+    $list[$rank] = ["no" => $row[$no],"title" => $row[$title], "url" => $row[$url]];
   }
   return $list;
 }
@@ -355,7 +372,9 @@ function getRankDataFromKeywordsCategory($maxsite, $sTrgtY_M, $pdo, $kwdata, $ca
 }
 
 /**
- *
+ * @param MAX_SITE
+ * @param $string → "rank" or ":rank"
+ * @return string
  */
 function makeRanks($maxNum, $string){
  $eachRankSelect = array();
