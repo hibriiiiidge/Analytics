@@ -2,7 +2,7 @@ $(function(){
   //キーワード追加ボタンがクリックされたら
   $('body').on('click', '#addKw', addKeyword);
   //削除ボタンがクリックされたら
-  $('body').on('click', 'button', delKeyword);
+  $('body').on('click', '.tdDel button', delKeyword);
 
 
   /**
@@ -90,7 +90,7 @@ $(function(){
         $(".tdKw").eq(i).closest(".tdKw").append($('<a>').text(val.keyword));
       }
       else{
-        $(".tdKw").eq(i).closest(".tdKw").append($('<a>').text(val.keyword).attr({href:"/seo/rank/daily.php?keywordno="+val.keyNo}));
+        $(".tdKw").eq(i).closest(".tdKw").append($('<a>').text(val.keyword).attr({href:"/seo/rank/daily.php?keywordNo="+val.keyNo}));
       }
 
       $(".trKws").eq(i).append($('<td>').text(val.rgst).attr({class:'tdRgst'}));

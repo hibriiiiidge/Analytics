@@ -8,7 +8,7 @@
   //@TODO class化した方が良い キーワード関連
   //var_dump($_POST);
   $categoryNo = $_POST['ctgNo']; //@TODO バリデーション
-  $keyword    = $_POST['kw'];
+  $keyword    = mb_convert_kana($_POST['kw'], s);
 
   try {
     $slctKwSql = "SELECT count(*) AS cnt FROM `keywords` WHERE keyword = :keyword AND status <> 'x'";
@@ -17,6 +17,7 @@
     $slctkyStmt -> execute();
     $row = $slctkyStmt -> fetch(PDO::FETCH_ASSOC);
     //既にキーワードが存在するかどうかの確認
+    //var_dump($row['cnt']);
     if($row['cnt']){
       //存在する場合
       echo json_encode(array("res" => "exist"), JSON_UNESCAPED_UNICODE);

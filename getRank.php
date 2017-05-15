@@ -1,7 +1,7 @@
 <?php
   //TODO 全体リファクタリング+関数化
-  define(SITE_NUM, 1); //n*10が取得サイト数
-  //define(MAX_SITE, 20); //表示対象サイト数
+  //define(SITE_NUM, 2); //n*10が取得サイト数
+  // define(MAX_SITE, 20); //表示対象サイト数
 
   include("config.php");
   include("db_connect.php");
@@ -38,7 +38,7 @@
       $kywdNo     = $kwAry[$i][$j]['no'];
       $halfWidthSpaceQ = mb_convert_kana($tw, 's');
 
-      for ($k=0; $k < SITE_NUM ; $k++) {
+      for ($k=0; $k < (MAX_SITE)/10 ; $k++) {
         $q = urlencode($halfWidthSpaceQ);
         //ターゲットURL
         $pageNo   = 10*$k;
@@ -65,6 +65,7 @@
       for ($m=0; $m < MAX_SITE ; $m++) {
         $trgtTitleAry   = explode("キャッシュ", $jsonData['items'][$i][$j][$m]['title']);
         $trgtTitle      = $trgtTitleAry[0];
+        //$trgtTitle      = $jsonData['items'][$i][$j][$m]['title'];
         $trgtUrl        = $jsonData['items'][$i][$j][$m]['url'];
 
         $instSiteSql =
@@ -81,6 +82,8 @@
           ) AS TMP
         WHERE NOT EXISTS
           (SELECT * FROM `site` WHERE url = '".$trgtUrl."' AND status <>'x')";
+
+        //var_dump($instSiteSql);
         $insrtSiteStmt = $pdo -> prepare($instSiteSql);
         $insrtSiteStmt->execute();
       }

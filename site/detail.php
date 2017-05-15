@@ -78,7 +78,7 @@
     <div class="">
       <a href="/seo/">TOP</a><br/>
       <?php
-      echo '<a href="/seo/rank/monthly.php?keywordno='.$keywordNo.'&startTargetYearMonth='.$sTrgtYM.'">戻る</a>'
+      echo '<a href="/seo/rank/monthly.php?keywordNo='.$keywordNo.'&startTargetYearMonth='.$sTrgtYM.'">戻る</a>'
       ?>
     </div>
     <div class="">

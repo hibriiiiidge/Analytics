@@ -5,7 +5,7 @@
   include("../db_connect.php");
   include("../utility/functions.php");
 
-  $keywordNo = $_GET['keywordno']; //@TODO バリデーション
+  $keywordNo = $_GET['keywordNo']; //@TODO バリデーション
   $_SESSION['keywordNo'] = $keywordNo;
   $sTrgtYM   = $_GET['startTargetYearMonth'];
   //201704を2017-04の形式に整形
@@ -60,7 +60,7 @@
   <body>
     <div class="">
       <a href="/seo/">TOP</a><br/>
-      <?php echo '<a href="/seo/rank/daily.php?keywordno='.$keywordNo.'">戻る</a>'?>
+      <?php echo '<a href="/seo/rank/daily.php?keywordNo='.$keywordNo.'">戻る</a>'?>
     </div>
     <div class="">
       検索ワードの追加
@@ -74,10 +74,10 @@
       </div>
       <div class="">
         <?php
-          echo '<a href="/seo/rank/monthly.php?keywordno='.h($keywordNo).'&startTargetYearMonth='.h($sTrgtLastYM).'">先月の推移</a>';
+          echo '<a href="/seo/rank/monthly.php?keywordNo='.h($keywordNo).'&startTargetYearMonth='.h($sTrgtLastYM).'">先月の推移</a>';
           if($thisMonth !== $sTrgtYM){
             //今月のデータで無かった場合に戻るボタン１つ戻るボタンの表示
-            echo '<a href="/seo/rank/monthly.php?keywordno='.h($keywordNo).'&startTargetYearMonth='.h($sTrgtnextYM).'">一月戻る</a>';
+            echo '<a href="/seo/rank/monthly.php?keywordNo='.h($keywordNo).'&startTargetYearMonth='.h($sTrgtnextYM).'">一月戻る</a>';
           }
          ?>
       </div>

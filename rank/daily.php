@@ -20,6 +20,7 @@
     $today = date("Ymd");//@TODO 本来はこっち
     $ytday = date("Ymd", strtotime("-1 day"));
   }
+
   //$today = "20170411";
   //$ytday = "20170410";
 
@@ -48,7 +49,7 @@
   //整形後の配列
   $compList = array_merge_recursive($list, $diff);
 
-  //var_dump($ytday);
+  //var_dump($todayRank);
 
 ?>
 <!DOCTYPE html>
@@ -77,7 +78,7 @@
     </div>
     <div class="">
       <?php
-        echo '<a href="/seo/rank/monthly.php?keywordno='.h($keywordNo).'&startTargetYearMonth='.h($sTrgtYM).'">今月の推移</a>';
+        echo '<a href="/seo/rank/monthly.php?keywordNo='.h($keywordNo).'&startTargetYearMonth='.h($sTrgtYM).'">今月の推移</a>';
        ?>
     </div>
     <table id="dailyTable">
