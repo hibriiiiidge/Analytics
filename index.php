@@ -75,4 +75,12 @@
       </table>
     </div>
   </body>
+  <script>
+      $(function(){
+        $('#test').click(function() {
+          var v = $('#test').val();
+          alert(v);
+        });
+      });
+    </script>
 </html>
